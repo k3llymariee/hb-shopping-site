@@ -77,6 +77,7 @@ def show_shopping_cart():
     # Make sure your function can also handle the case wherein no cart has
     # been added to the session
 
+    
     return render_template("cart.html")
 
 
@@ -99,7 +100,18 @@ def add_to_cart(melon_id):
     # - flash a success message
     # - redirect the user to the cart page
 
-    return session[melon_id]
+    if not session.get('cart'):
+        session['cart'] = {}
+
+    session['cart'][melon_id] = session['cart'].get(melon_id, 0) + 1
+
+    print('\n\n\n\n\n')
+    print(session['cart'])
+    print('\n\n\n\n\n')
+
+    flash("Your melon was added to the cart. Yay melons!")
+    
+    return redirect("/cart")
 
 
 @app.route("/login", methods=["GET"])
