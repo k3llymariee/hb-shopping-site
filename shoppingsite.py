@@ -78,7 +78,39 @@ def show_shopping_cart():
     # been added to the session
 
     
-    return render_template("cart.html")
+
+
+    if not session.get('cart'):
+        melon_list = []
+        total_cost = 0
+        # return render_template("cart.html",
+        #                     melon_list=melon_list,
+        #                     total_cost=total_cost)
+        # return render_template("cart.html")
+    else:
+        cart_items = session['cart']
+        melon_list = []  # create a list to hold melon objects
+        total_cost = 0
+        for melon in cart_items: # loop over the cart dictionary
+            melon_object = melons.get_by_id(melon)  #get the corresponding Melon object
+            melon_cost = melon_object.price * cart_items[melon]  # compute the total cost for that type of melon
+            total_cost += melon_cost  # add this to the order total
+            melon_object.quantity = cart_items[melon]  #add quantity as attribute on the Melon object
+            melon_object.cost = melon_cost # add quantity total cost as attribute
+            melon_list.append(melon_object)  # add the Melon object to the list 
+
+        # print('\n\n\n\n\n')
+        # print(melon_list)
+        # print(total_cost)
+        # print('\n\n\n\n\n')
+
+
+
+
+    # pass the total order cost and the list of Melon objects to the template
+    return render_template("cart.html",
+                            melon_list=melon_list,
+                            total_cost=total_cost)
 
 
 @app.route("/add_to_cart/<melon_id>")
@@ -110,7 +142,7 @@ def add_to_cart(melon_id):
     print('\n\n\n\n\n')
 
     flash("Your melon was added to the cart. Yay melons!")
-    
+
     return redirect("/cart")
 
 
